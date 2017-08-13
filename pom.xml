@@ -1,6 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>nz.caffe.tenant</groupId>
   <artifactId>multitenant-derby</artifactId>
   <version>1.0.0-SNAPSHOT</version>
@@ -28,8 +27,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <derby.version>10.12.1.1</derby.version>
-    <spring.version>4.2.7.RELEASE</spring.version>
+    <derby.version>10.13.1.1</derby.version>
+    <spring.version>4.3.10.RELEASE</spring.version>
   </properties>
   <build>
     <plugins>
@@ -119,8 +118,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <optimize>false</optimize>
           <debug>true</debug>
         </configuration>
@@ -128,30 +127,46 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.2.18.v20160721</version>
+        <version>9.4.6.v20170531</version>
       </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.25</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.7.25</version>
+    </dependency>
+    <dependency>
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
-      <version>3.5.1</version>
+      <version>3.5.3</version>
     </dependency>
     <dependency>
       <groupId>com.mattbertolini</groupId>
       <artifactId>liquibase-slf4j</artifactId>
-      <version>1.2.1</version>
+      <version>2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
-      <version>2.4.7</version>
+      <version>2.6.3</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -187,7 +202,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.11</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
