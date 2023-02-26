@@ -1,0 +1,28 @@
+name: Build
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        jdk: ['17']
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Run
+      run: |
+        mvn clean install jetty:run-forked -Dderby.system.home="$(pwd)/target/classes" &
+        sleep 45
+        for i in $(seq 1 4) ; do printf "curl -v -H \"tenant: tenant%s\" http://localhost:8080/\0" "$i" ; done | parallel -0
+
+    - name: Stop test resources
+      if: always()
+      run: |
+        mvn clean jetty:stop || true
