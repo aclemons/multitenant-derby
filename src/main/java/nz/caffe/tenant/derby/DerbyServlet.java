@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2015-2019 Andrew Clemons <andrew.clemons@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,16 @@
 package nz.caffe.tenant.derby;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.sql.DataSource;
 
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
+import org.flywaydb.core.api.Location;
+import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.springframework.dao.UncategorizedDataAccessException;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.web.servlet.HttpServletBean;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -33,15 +34,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import liquibase.Contexts;
-import liquibase.LabelExpression;
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
 
 /**
  * This is a simple servlet to create a derby database for every 'tenant' to the
@@ -51,8 +43,6 @@ public final class DerbyServlet extends HttpServletBean {
 
 	/** serial version uid. */
 	private static final long serialVersionUID = 1139678897300023659L;
-
-	private DatabaseFactory databaseFactory;
 
 	/** cache. */
 	private final ConcurrentMap<String, HikariDataSource> map = new ConcurrentHashMap<>();
@@ -83,7 +73,7 @@ public final class DerbyServlet extends HttpServletBean {
 		@SuppressWarnings("resource")
 		final DataSource ds = getDataSourceForTenant(tenantId);
 
-		runLiquibase(ds);
+		runFlyway(ds);
 	}
 
 	private HikariDataSource getDataSourceForTenant(final String tenant) {
@@ -112,50 +102,20 @@ public final class DerbyServlet extends HttpServletBean {
 		return oldValue;
 	}
 
-	@Override
-	protected void initServletBean() throws ServletException {
-		super.initServletBean();
-
-		this.databaseFactory = DatabaseFactory.getInstance();
-	}
-
-	@SuppressWarnings("resource")
-	private void runLiquibase(final DataSource dataSource) {
-		Connection connection = null;
-		Database database = null;
+	private static void runFlyway(final DataSource dataSource) {
 		try {
+			final ClassicConfiguration configuration = new ClassicConfiguration();
+			configuration.setDataSource(dataSource);
+			configuration.setLocations(new Location("classpath:flyway"));
 
-			connection = DataSourceUtils.getConnection(dataSource);
+			Flyway flyway = new Flyway(configuration);
+			flyway.migrate();
 
-			database = this.databaseFactory.findCorrectDatabaseImplementation(
-					new JdbcConnection(connection));
-
-			final Liquibase liquibase = new Liquibase("liquibase.xml",
-					new ClassLoaderResourceAccessor(
-							getClass().getClassLoader()),
-					database);
-
-			liquibase.update(new Contexts(), new LabelExpression());
-
-		} catch (final LiquibaseException e) {
-			throw new UncategorizedDataAccessException("liquibase", e) {
+		} catch (final FlywayException e) {
+			throw new UncategorizedDataAccessException("flyway", e) {
 				/** serial version uid. */
 				private static final long serialVersionUID = -1213236830406128584L;
 			};
-		} finally {
-			if (database != null) {
-				try {
-					database.close();
-				} catch (final DatabaseException ex) {
-					this.logger.debug("Could not close liquibase database", ex);
-				} catch (final Throwable ex) {
-					this.logger.debug(
-							"Unexpected exception on closing liquibase database",
-							ex);
-				}
-			}
-
-			JdbcUtils.closeConnection(connection);
 		}
 	}
 
