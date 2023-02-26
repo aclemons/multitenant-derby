@@ -3,7 +3,7 @@
   <groupId>nz.caffe.tenant</groupId>
   <artifactId>multitenant-derby</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <name>multitenant-derby</name>
   <inceptionYear>2015</inceptionYear>
   <licenses>
@@ -109,9 +109,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.3.2</version>
-        <configuration>
-          <warName>multitenant-derby</warName>
-        </configuration>
       </plugin>
       <plugin>
         <inherited>true</inherited>
@@ -166,6 +163,10 @@
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-jcl</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -179,9 +180,9 @@
       <version>${spring.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

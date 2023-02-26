@@ -20,9 +20,6 @@ import java.sql.Connection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -35,6 +32,9 @@ import org.springframework.web.servlet.HttpServletBean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
