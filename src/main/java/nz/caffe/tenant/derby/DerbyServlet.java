@@ -22,8 +22,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
@@ -55,8 +53,6 @@ public final class DerbyServlet extends HttpServletBean {
 	private static final long serialVersionUID = 1139678897300023659L;
 
 	private DatabaseFactory databaseFactory;
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/** cache. */
 	private final ConcurrentMap<String, HikariDataSource> map = new ConcurrentHashMap<>();
@@ -141,7 +137,7 @@ public final class DerbyServlet extends HttpServletBean {
 
 			liquibase.update(new Contexts(), new LabelExpression());
 
-		} catch (LiquibaseException e) {
+		} catch (final LiquibaseException e) {
 			throw new UncategorizedDataAccessException("liquibase", e) {
 				/** serial version uid. */
 				private static final long serialVersionUID = -1213236830406128584L;
