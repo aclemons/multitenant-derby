@@ -1,9 +1,10 @@
+---
 name: Build
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -13,24 +14,26 @@ jobs:
         jdk: ['17']
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
 
-    - name: Set up JDK ${{ matrix.jdk }}
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: ${{ matrix.jdk }}
-        java-package: jdk
-        cache: 'maven'
+      - name: Set up JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: ${{ matrix.jdk }}
+          java-package: jdk
+          cache: maven
 
-    - name: Run
-      run: |
-        mvn clean install jetty:run -Dderby.system.home="$(pwd)/target/classes" &
-        sleep 45
-        for i in $(seq 1 4) ; do printf "curl -f -v -H \"tenant: tenant%s\" http://localhost:8080/\0" "$i" ; done | parallel -0
+      - name: Run
+        run: |
+          mvn clean install jetty:run -Dderby.system.home="$(pwd)/target/classes" &
+          sleep 45
+          for i in $(seq 1 4) ; do printf "curl -f -v -H \"tenant: tenant%s\" http://localhost:8080/\0" "$i" ; done | parallel -0
 
-    - name: Stop test resources
-      if: always()
-      run: |
-        mvn clean jetty:stop || true
+      - name: Stop test resources
+        if: always()
+        run: |
+          mvn clean jetty:stop || true
