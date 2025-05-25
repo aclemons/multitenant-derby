@@ -45,7 +45,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <derby.version>10.17.1.0</derby.version>
-    <spring.version>6.2.6</spring.version>
+    <spring.version>6.2.7</spring.version>
     <slf4j.version>2.0.17</slf4j.version>
     <flyway.version>11.6.0</flyway.version>
   </properties>
