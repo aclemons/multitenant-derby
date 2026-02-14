@@ -47,7 +47,7 @@
     <derby.version>10.17.1.0</derby.version>
     <spring.version>7.0.3</spring.version>
     <slf4j.version>2.0.17</slf4j.version>
-    <flyway.version>11.20.3</flyway.version>
+    <flyway.version>12.0.1</flyway.version>
   </properties>
   <build>
     <plugins>
